@@ -153,6 +153,11 @@ void AP_MotorsTri::enable()
     rc_enable_ch(AP_MOTORS_MOT_2);
     rc_enable_ch(AP_MOTORS_MOT_4);
     rc_enable_ch(AP_MOTORS_CH_TRI_YAW);
+
+    #if CUSTOM_TRI != 0
+        rc_enable_ch(AP_MOTORS_MOT_5);
+        rc_enable_ch(AP_MOTORS_MOT_6);
+    #endif
 }
 
 void AP_MotorsTri::output_to_motors()
