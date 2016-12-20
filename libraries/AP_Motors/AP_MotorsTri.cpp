@@ -22,6 +22,9 @@
 #include <AP_Math/AP_Math.h>
 #include "AP_MotorsTri.h"
 
+#define CUSTOM_TRI 1
+
+
 extern const AP_HAL::HAL& hal;
 
 const AP_Param::GroupInfo AP_MotorsTri::var_info[] = {
@@ -81,20 +84,41 @@ const AP_Param::GroupInfo AP_MotorsTri::var_info[] = {
 // init
 void AP_MotorsTri::Init()
 {
-    add_motor_num(AP_MOTORS_MOT_1);
-    add_motor_num(AP_MOTORS_MOT_2);
-    add_motor_num(AP_MOTORS_MOT_4);
+
+
+    #if CUSTOM_TRI == 0
+         add_motor_num(AP_MOTORS_MOT_1);
+         add_motor_num(AP_MOTORS_MOT_2);
+         add_motor_num(AP_MOTORS_MOT_4);
     
-    // set update rate for the 3 motors (but not the servo on channel 7)
-    set_update_rate(_speed_hz);
+        // set update rate for the 3 motors (but not the servo on channel 7)
+        set_update_rate(_speed_hz);
 
-    // set the motor_enabled flag so that the ESCs can be calibrated like other frame types
-    motor_enabled[AP_MOTORS_MOT_1] = true;
-    motor_enabled[AP_MOTORS_MOT_2] = true;
-    motor_enabled[AP_MOTORS_MOT_4] = true;
+        // set the motor_enabled flag so that the ESCs can be calibrated like other frame types
+        motor_enabled[AP_MOTORS_MOT_1] = true;
+        motor_enabled[AP_MOTORS_MOT_2] = true;
+        motor_enabled[AP_MOTORS_MOT_4] = true;
 
-    // allow mapping of motor7
-    add_motor_num(AP_MOTORS_CH_TRI_YAW);
+        // allow mapping of motor7
+        add_motor_num(AP_MOTORS_CH_TRI_YAW);
+    #else
+        add_motor_num(AP_MOTORS_MOT_1);
+        add_motor_num(AP_MOTORS_MOT_2);
+        add_motor_num(AP_MOTORS_MOT_4);
+        add_motor_num(AP_MOTORS_MOT_5);
+        add_motor_num(AP_MOTORS_MOT_6);
+
+        // set update rate for the 5 motors (but not the servo on channel 7)
+        set_update_rate(_speed_hz);
+        // set the motor_enabled flag so that the ESCs can be calibrated like other frame types
+        motor_enabled[AP_MOTORS_MOT_1] = true;
+        motor_enabled[AP_MOTORS_MOT_2] = true;
+        motor_enabled[AP_MOTORS_MOT_4] = true;
+        motor_enabled[AP_MOTORS_MOT_5] = true;
+        motor_enabled[AP_MOTORS_MOT_6] = true;
+        // allow mapping of motor7
+        add_motor_num(AP_MOTORS_CH_TRI_YAW);
+    #endif
 }
 
 // set update rate to motors - a value in hertz
@@ -104,11 +128,21 @@ void AP_MotorsTri::set_update_rate( uint16_t speed_hz )
     _speed_hz = speed_hz;
 
     // set update rate for the 3 motors (but not the servo on channel 7)
-    uint32_t mask = 
-	    1U << AP_MOTORS_MOT_1 |
-	    1U << AP_MOTORS_MOT_2 |
-	    1U << AP_MOTORS_MOT_4;
-    rc_set_freq(mask, _speed_hz);
+    #if CUSTOM_TRI == 0
+        uint32_t mask =
+            1U << AP_MOTORS_MOT_1 |
+            1U << AP_MOTORS_MOT_2 |
+            1U << AP_MOTORS_MOT_4;
+    #else
+          uint32_t mask =
+            1U << AP_MOTORS_MOT_1 |
+            1U << AP_MOTORS_MOT_2 |
+            1U << AP_MOTORS_MOT_4 |
+            1U << AP_MOTORS_MOT_5 |
+            1U << AP_MOTORS_MOT_6;
+    #endif
+          rc_set_freq(mask, _speed_hz);
+
 }
 
 // enable - starts allowing signals to be sent to motors

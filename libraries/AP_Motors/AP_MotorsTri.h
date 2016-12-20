@@ -7,6 +7,7 @@
 #include <RC_Channel/RC_Channel.h>     // RC Channel Library
 #include "AP_MotorsMulticopter.h"
 
+
 // tail servo uses channel 7
 #define AP_MOTORS_CH_TRI_YAW    CH_7
 
